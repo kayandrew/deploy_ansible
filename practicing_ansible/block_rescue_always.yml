@@ -1,0 +1,24 @@
+---
+- name: learning how to use block, rescue, and always
+  hosts: prod
+  become: false
+  tasks:
+          - name: pr\int a message
+            block:
+                    - name: print an initial message
+                      debug:
+                              msg: "I execute normally"
+                    - name: force a failure
+                      command: /bin/false
+                    - name: I never print
+                      debug:
+                              msg: "I never execute due to the above failed command"
+            rescue:
+                    - name: Print after an error
+                      debug:
+                              msg: "I have caught an error"
+            always:
+                    - name: always print this
+                      debug:
+                              msg: "This will ALWAYS execute"
+            when: ansible_distribution == "CentOS"

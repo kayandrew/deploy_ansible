@@ -1,0 +1,8 @@
+---
+- name: print a few facts
+  hosts: balancer
+  tasks:
+          - name: print a few facts
+            debug:
+                    msg: The total amount of memory in {{ ansible_facts.fqdn }} is {{ ansible_facts.memtotal_mb }} MB
+...

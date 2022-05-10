@@ -1,0 +1,44 @@
+---
+# tasks file for apache
+- name: install httpd
+  yum:
+          name: httpd
+          state: present
+- name: start the service
+  service:
+          name: httpd
+          state: started
+          enabled: true
+  tags:
+          - restart_httpd
+- name: add it to the firewall
+  firewalld:
+          service: http
+          immediate: true
+          permanent: true
+          state: enabled
+- name: create the vhost directory
+  file:
+          path: "/var/www/vhosts/{{ ansible_hostname }}"
+          state: directory
+- name: copy the index.html file over
+  copy:
+          src: index.html
+          dest: "/var/www/vhosts/{{ ansible_hostname }}/index.html"
+  notify:
+          - restart apache
+- name: copy the vhost file over
+  copy:
+          src: vhost.conf
+          dest: /etc/httpd/conf.d/vhost.conf
+          owner: root
+          group: root
+          mode: 0644
+  notify:
+          - restart apache
+- name: test the configuration
+  uri:
+          url: http://managednode1.example.com
+          return_content: yes
+          status_code: 200
+...

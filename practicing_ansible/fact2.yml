@@ -1,0 +1,8 @@
+---
+- name: print a few facts
+  hosts: balancer
+  tasks:
+          - name: print a few facts
+            debug:
+                    msg: The default IPV4 aadress of {{ ansible_facts.fqdn }} is {{ ansible_facts.default_ipv4.address }}
+...

@@ -1,0 +1,53 @@
+---
+- name: play with files, directories
+  hosts: prod
+  become: true
+  tasks:
+          - name: create a dir /tmp/andrew
+            file:
+                    path: /tmp/ansible
+                    state: directory
+                    owner: ansible
+                    group: ansible
+                    mode: 0744
+                    setype: public_content_t
+          - name: copy a file and place it in the /tmp/ansible directory
+            template:
+                    src: index.html.j2
+                    dest: /tmp/ansible/file1
+                    owner: ansible
+                    group: ansible
+                    mode: 0644
+                    setype: public_content_t
+          - name: add more data to the file
+            lineinfile:
+                    path: /tmp/ansible/file1
+                    insertafter: "^Welcome"
+                    line: This line has been added to {{ ansible_facts.fqdn }} using the lineinfile module
+          - name: add a block of data to the file
+            blockinfile:
+                    path: /tmp/ansible/file1
+                    block: |
+                           This is the first line of the block
+                           This is the second line of the block
+                           a Third line
+                    state: present
+                    backup: true 
+          - name: syncronize a file from control node to managed host
+            synchronize:
+                    src: /etc/hosts
+                    dest: /tmp/ansible/file2
+          - name: change ownership of file2
+            file:
+                    path: /tmp/ansible/file2
+                    owner: ansible
+                    group: ansible
+                    mode: 0644
+                    setype: public_content_t
+          - name: permanently change the selinux file contexttype
+            sefcontext:
+                    target: "/tmp/ansible/file2(/.*)?"
+                    setype: public_content_t
+                    state: present 
+
+                    

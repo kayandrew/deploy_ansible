@@ -1,0 +1,14 @@
+---
+- name: check the time
+  hosts: balancer dev test prod
+  become: false
+  tasks:
+          - name: check the time
+            command: date
+            register: date_result
+          - name: print the date on all my servers
+            debug:
+                    var: date_result.stdout
+          - name: print the date
+            debug:
+                    msg: "The date is {{ date_result.stdout }}"

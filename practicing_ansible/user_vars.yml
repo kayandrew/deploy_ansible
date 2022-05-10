@@ -1,0 +1,13 @@
+---
+- name: install users using host_vars
+  hosts: managednode2.example.com
+  become: yes
+  vars:
+          users:
+                  - andrew
+                  - albert 
+  tasks:
+          - name: create users using host_vars file
+            user:
+                    name: "{{ users }}"
+                    state: present

@@ -1,0 +1,44 @@
+---
+- name: install httpd only when memory is less than 1900
+  hosts: balancer prod
+  become: yes
+  vars:
+          - package: httpd
+  tasks:
+          - name: install, configure and start httpd
+            block:
+                    - name: install httpd
+                      yum:
+                              name: "{{ item }}"
+                              state: present
+                      loop:
+                              - "{{ package }}"
+                      when: inventory_hostname in groups ['balancer']
+                    - name: start the httpd service
+                      service:
+                              name: "{{ package }}"
+                              state: started
+                              enabled: true
+                      when: inventory_hostname in groups ['balancer']
+                    - name: add http to the firewall
+                      firewalld:
+                              service: http
+                              immediate: true
+                              permanent: true
+                              state: enabled
+                      when: inventory_hostname in groups ['balancer']
+                    - name: copy a new index.html file
+                      template:
+                              src: index.html.j2
+                              dest: /var/www/html/index.html
+                      when: inventory_hostname in groups ['balancer']
+                      notify:
+                              - restart_httpd
+  handlers:
+          - name: restart_httpd
+            service:
+                    name: httpd
+                    state: restarted
+            when: inventory_hostname in groups ['balancer']
+
+...

@@ -1,0 +1,26 @@
+---
+- name: configure a webserver by importing tasks from the tasks directory
+  hosts: balancer
+  become: true
+  tasks:
+          - name: import the environment task file
+            import_tasks: tasks/environment.yml
+            vars:
+                    package: httpd
+                    service: httpd
+          - name: Import the firewall task file and set the variables
+            import_tasks: tasks/firewall.yml
+            vars:
+                    firewall_pkg: firewalld
+                    firewall_svc: firewalld
+                    rule: http
+          - name: Import the placeholder task file and set the variables
+            import_tasks: tasks/placeholder.yml
+            vars:
+                    file: /var/www/html/index.html
+          - name: Import the test play file and set the variables
+            import_tasks: tasks/test.yml
+            vars:
+                    url: 'http://managednode1.example.com'
+...
+

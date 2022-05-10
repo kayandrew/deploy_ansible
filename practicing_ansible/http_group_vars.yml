@@ -1,0 +1,23 @@
+---
+- name: install httpd using group_vars 
+  hosts: balancer
+  become: yes
+  become_method: sudo
+  remote_user: ansible
+  tasks:
+          - name: install httpd
+            yum:
+                    name: "{{ web_pkg }}"
+                    state: present
+          - name: enable the service
+            service:
+                    name: "{{ web_srv }}"
+                    state: started
+                    enabled: yes
+          - name: add the service to the firewall
+            firewalld:
+                    service: "{{ fire_srv }}"
+                    permanent: yes
+                    immediate: yes
+                    state: enabled
+...

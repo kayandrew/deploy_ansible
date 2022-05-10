@@ -1,0 +1,29 @@
+---
+- name: install apache with copied index.html
+  hosts: balancer
+  become: true
+  tasks:
+          - name: install httpd
+            yum:
+                    name: httpd
+                    state: present
+          - name: copy the index file over
+            copy:
+                    src: files/index.html
+                    dest: /var/www/html/
+                    owner: root
+                    group: root
+                    mode: 0644
+          - name: start the httpd service
+            service:
+                    name: httpd
+                    state: started
+                    enabled: true
+          - name: add the service to the firewall
+            firewalld:
+                    service: http
+                    permanent: yes
+                    state: enabled
+                    immediate: yes
+
+

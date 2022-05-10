@@ -1,0 +1,21 @@
+---
+- name: add users to balancer node
+  hosts: balancer
+  become: true
+  vars_files:
+          - secret.yml
+  tasks:
+          - name: create a new group
+            group:
+                    name: dba
+                    state: present
+          - name: create users and add to dba group
+            user:
+                    name: "{{ username }}"
+                    state: present
+                    password: "{{ password }}"
+                    groups: dba
+                    append: yes
+                    generate_ssh_key: yes
+                    ssh_key_bits: 4096
+                    ssh_key_file: .ssh/id_rsa

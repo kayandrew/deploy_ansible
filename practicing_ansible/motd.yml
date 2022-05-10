@@ -1,0 +1,12 @@
+---
+- name: new motd file
+  hosts: all
+  become: yes
+  tasks:
+          - name: create new motd.j2 file
+            template:
+                    src: motd.j2
+                    dest: /etc/motd
+                    owner: root
+                    group: root
+                    mode: 0644

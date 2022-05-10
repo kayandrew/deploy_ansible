@@ -1,0 +1,7 @@
+---
+- name: test the web service
+  uri:
+          url: "{{ url }}"
+          status_code: 200
+          return_content: yes
+...

@@ -1,0 +1,16 @@
+---
+- name: list installed packages
+  hosts: balancer
+  become: yes
+  vars:
+          web_pkg: httpd
+  tasks:
+          - name: check if package is installed
+            yum:
+                    list: "{{ web_pkg }}"
+            register: installed_packages
+
+          - debug:
+                  var: installed_packages
+...
+

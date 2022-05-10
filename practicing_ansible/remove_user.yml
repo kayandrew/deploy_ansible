@@ -1,0 +1,14 @@
+---
+- name: remove user andrew and group group dba
+  hosts: balancer
+  become: true
+  tasks:
+          - name: remove user andrew
+            user:
+                    name: andrew
+                    state: absent
+                    remove: yes
+          - name: remove the dba group
+            group:
+                    name: dba
+                    state: absent

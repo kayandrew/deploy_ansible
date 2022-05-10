@@ -1,0 +1,14 @@
+---
+- name: loop register test
+  hosts: balancer
+  become: no
+  gather_facts: no
+  tasks:
+          - name: looping echo task
+            shell: "echo this is my {{ item }}"
+            loop:
+                    - one
+                    - two
+            register: echo_results
+          - name: show results of echo_results variable
+            debug:

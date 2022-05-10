@@ -1,0 +1,31 @@
+---
+- name: creating multiple users wwith a loop
+  hosts: balancer
+  become: yes
+  tasks:
+          - name: create a dba group
+            group:
+                    name: dba
+                    state: present
+                    gid: 1009
+          - name: create multiple users
+            user:
+                    name: "{{ item }}"
+                    state: present
+                    groups: "dba"
+                    #generate_ssh_keys: yes
+                    #ssh_key_bits: 2048
+                    #ssh_key_file: .ssh/id_rsa
+                    append: yes
+            loop:
+                    - andrew
+                    - albert
+          - name: create another 2 uers using with_items
+            user:
+                    name: "{{ item }}"
+                    state: present
+                    groups: dba
+                    append: yes
+            with_items:
+                    - stephen
+                    - norman

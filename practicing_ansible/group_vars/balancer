@@ -1,0 +1,7 @@
+web_pkg: 
+    - httpd
+    - vsftpd
+    - mod_ssl
+    - tree
+web_srv: httpd
+fire_srv: http

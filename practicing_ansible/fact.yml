@@ -1,0 +1,7 @@
+---
+- name: gather facts
+  hosts: balancer
+  tasks:
+          - name: print all facts
+            debug:
+                    var: ansible_facts

@@ -1,0 +1,6 @@
+---
+- name: create new motd via role
+  hosts: balancer
+  become: true
+  roles:
+          - motd

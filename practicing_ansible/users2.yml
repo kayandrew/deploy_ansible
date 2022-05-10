@@ -1,0 +1,27 @@
+---
+- name: create users by looping
+  hosts: balancer
+  become: yes
+  vars:
+          users:
+                  - name: linuxuser1
+                    groups: dba
+                  - name: linuxuser2
+                    groups: sysadmin
+  tasks:
+          - name: create groups
+            group:
+                    name: "{{ item }}"
+                    state: present
+            with_items:
+                    - dba
+                    - sysadmin
+          - name: create users
+            user:
+                    name: "{{ item.name }}"
+                    state: present
+                    groups: "{{ item.groups }}"
+                    append: yes
+            loop:
+                    "{{ users }}"
+...
