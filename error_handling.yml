@@ -1,0 +1,43 @@
+---
+- name: install and start a few services as well as block, rescue, always
+  hosts: prod
+  become: true
+  vars:
+          - webpackage: httpd
+          - webservice: httpd
+          - users:
+                  - andrew
+                  - albert
+                  - christian
+                  - edward
+  tasks:
+          - name: handle the error
+            block:
+                    - name: Print a message
+                      debug:
+                              msg: 'I execute normally'
+                      when: ansible_hostname == "managednode2" and ansible_distribution == "CentOS"
+                    - name: force a failure
+                      command: /bin/false
+
+                    - name: Never print this
+                      debug:
+                              msg: 'I never execute due to the above error'
+            rescue:
+                    - name: print when errors exist above
+                      debug:
+                              msg: 'I am printing even though errors exist above'
+                    - name: force a failure
+                      command: /bin/false
+
+                    - name: Never print this
+                      debug:
+                              msg: 'I never execute due to the above error'
+            always:
+                    - name: always do this
+                      debug:
+                              msg: 'This will always execute no matter what happens above'
+                      when: inventory_hostname in groups['prod'] and ansible_hostname == "managednode3"
+
+
+

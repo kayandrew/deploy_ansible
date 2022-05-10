@@ -1,0 +1,49 @@
+---
+# tasks file for third-apache-role
+#
+- block:
+        - name: install httpd
+          yum:
+                  name: "{{ webpkg }}"
+                  state: latest
+        - name: start and enable the apache service
+          systemd:
+                  name: "{{ websvc }}"
+                  state: started
+                  enabled: true
+        - name: add apache service to the firewall
+          firewalld:
+                  service: "{{ firewallsvc }}"
+                  immediate: true
+                  permanent: true
+                  state: enabled
+        - name: change the default port that apache listens to
+          lineinfile:
+                  path: /etc/httpd/conf/httpd.conf
+                  regex: "^Listen"
+                  line: "Listen 86"
+                  state: present
+        - name: add the new port 86 to the firewall
+          firewalld:
+                  port: 86/tcp
+                  immediate: true
+                  permanent: true
+                  state: enabled
+        - name: add proper selinux context type to port 86
+          seport:
+                  ports: 86
+                  proto: tcp
+                  setype: http_port_t
+                  state: present
+        - name: add content to index.html file
+          copy:
+                  content: "Welcome to {{ ansible_facts['fqdn'] }} website\n"
+                  dest: /var/www/html/index.html
+          tags: index
+          notify: restart apache
+  become: true
+...
+
+
+
+          

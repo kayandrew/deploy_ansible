@@ -1,0 +1,46 @@
+---
+- name: create webcontent
+  hosts: balancer
+  become: true
+  tasks:
+          - name: install packages
+            yum:
+                    name: httpd
+                    state: present
+          - name: start the service
+            service:
+                    name: httpd
+                    state: started
+                    enabled: true
+          - name: allow http through firewall
+            firewalld:
+                    service: http
+                    immediate: true
+                    permanent: true
+                    state: enabled
+          - name: create additional group
+            group:
+                    name: webdev
+                    state: present
+          - name: create the /webdev directory
+            file:
+                    path: /webdev
+                    state: directory
+                    group: webdev
+                    mode: '2775'
+                    setype: httpd_sys_content_t
+          - name: create a symbolic link
+            file:
+                    src: /webdev
+                    dest: /var/www/html/webdev
+                    state: link
+          - name: create index.html
+            copy:
+                    content: "Development\n"
+                    dest: /webdev/index.html
+                    setype: httpd_sys_content_t
+          - name: restart the service
+            service:
+                    name: httpd
+                    state: restarted
+

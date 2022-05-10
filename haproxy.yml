@@ -1,0 +1,52 @@
+---
+- name: configure haproxy webserver
+  hosts: all
+  gather_facts: false
+  become: true
+  tasks:
+          - name: change hostnames
+            hostname:
+                    name: managednode1.example.com
+            delegate_to: 172.24.3.131
+            tags: runone
+          - name: change hostnames
+            hostname:
+                    name: managednode2.example.com
+            delegate_to: 172.24.3.130
+            tags: runone
+          - name: install webserver
+            yum:
+                    name: httpd
+                    state: latest
+          - name: start and enable the webserver
+            systemd:
+                    name: httpd
+                    state: started
+                    enabled: true
+          - name: create index.html file
+            copy:
+                    content: "DO447 HAproxy One"
+                    dest: /var/www/html/index.html
+            when: inventory_hostname in groups['square']
+          - name: create index.html file
+            copy:
+                    content: "DO447 HAproxy Two"
+                    dest: /var/www/html/index.html
+            when: inventory_hostname in groups['round']
+          - name: allow firewalld apache access
+            firewalld:
+                    service: http
+                    immediate: true
+                    permanent: true
+                    state: enabled
+          - name: add /etc/hosts server entry
+            lineinfile:
+                    path: /etc/hosts
+                    line: "{{ item }}"
+            loop:
+                    - 172.24.3.131 managednode1.example.com managednode1
+                    - 172.24.3.130 managednode1.example.com managednode2
+
+- name: import a playbook
+  import_playbook: localhost.yml
+

@@ -1,0 +1,6 @@
+---
+- name: put the apache role together for q5
+  hosts: webservers
+  become: true
+  roles:
+          - apache

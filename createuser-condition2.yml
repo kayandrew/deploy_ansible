@@ -1,0 +1,13 @@
+---
+- name: create user if memtotal is greater than 800M
+  hosts: webservers
+  become: true
+  tasks:
+          - name: create user if memtotal is greater than 800M
+            user:
+                    name: node1memuser
+                    state: present
+            when:
+                    - ansible_memtotal_mb > 800
+                    - ansible_nodename == 'managednode1.example.com'
+            

@@ -1,0 +1,51 @@
+---
+- name: create a logical vol partition
+  hosts: webservers
+  become: true
+  tasks:
+          - name: create a block
+            block:
+                    - name: create the partition
+                      parted:
+                              device: /dev/sdb
+                              number: 2
+                              part_start: 310MB
+                              part_end: 510MB
+                              part_type: primary
+                              flags: lvm
+                              state: present
+                    - name: create a vol group
+                      lvg:
+                              vg: vg02
+                              pvs: /dev/sdb2
+                              
+                    - name: create log vol
+                      lvol:
+                              vg: vg02
+                              lv: lv02
+                              size: 100m
+                              state: present
+                              pvs: /dev/sdb2
+                    - name: format the logical vol with xfs fs
+                      filesystem:
+                              dev: /dev/vg02/lv02
+                              fstype: xfs
+
+                    - name: create mount point
+                      file:
+                              path: /mnt/myvolmount
+                              state: directory
+                    - name: moun the fs
+                      mount:
+                              path: /mnt/myvoolmount
+                              src: /dev/vg02/lv02
+                              fstype: xfs
+                              state: mounted
+
+            rescue:
+                    - name: create a file
+                      copy:
+                              content: 'Something failed'
+                              dest: /tmp/myfailedpartition.txt
+
+

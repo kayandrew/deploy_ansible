@@ -1,0 +1,11 @@
+---
+- name: deploy haproxy
+  hosts: balancer
+  become: true
+  roles:
+          - balancer
+- name: deploy phpinfo
+  hosts: webservers
+  become: true
+  roles:
+          - phpinfo

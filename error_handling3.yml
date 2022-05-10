@@ -1,0 +1,64 @@
+---
+- name: install and start a few services as well as block, rescue, always
+  hosts: all
+  become: true
+  vars:
+          - webpackage: httpd
+          - webservice: httpd
+          - users:
+                  - andrew
+                  - albert
+                  - christian
+                  - edward
+  tasks:
+          - name: install {{ webpackage }}
+            block:
+                    - name: install
+                      package:
+                              name: "{{ webpackage }}"
+                              state: latest
+                    - name: start the {{ webservice }}
+                      service:
+                              name: "{{ webservice }}"
+                              enabled: true
+                              state: started
+                    - name: start and enable firwalld
+                      service:
+                              name: firewalld
+                              state: started
+                              enabled: true
+                    - name: add http to the firewall
+                      firewalld:
+                              service: httpd
+                              permanent: true
+                              immediate: true
+                              state: enabled
+            when: inventory_hostname in groups['dev']
+            rescue:
+                    - name: rescue the above failure
+                      firewalld:
+                              service: http
+                              permanent: true
+                              immediate: true
+                              state: enabled
+                    - name: add content to new index.html file
+                      copy:
+                              content: "Welcome to my {{ ansible_facts['fqdn'] }} website\n"
+                              dest: /var/www/html/index.html
+                      notify:
+                              - restart_httpd
+                    - name: test my website
+                      uri:
+                              url: "http://{{ ansible_facts['fqdn'] }}"
+                              return_content: yes
+                              status_code: 200
+                              #register: this
+                              #failed_when: "'welcome' not in this.content"
+  handlers:
+          - name: restart_httpd
+            service:
+                    name: httpd
+                    state: restarted
+
+
+            when: inventory_hostname in groups['dev']

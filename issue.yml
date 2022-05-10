@@ -1,0 +1,34 @@
+---
+- name: create an /etc/issue file on managed nodes
+  hosts: webservers
+  become: true
+  vars:
+          - company_name: CocaCola
+          - admin_user: admin1
+
+  tasks:
+          - name: copy the issue.j2 file over
+            template:
+                    src: issue.j2
+                    dest: /etc/issue
+                    owner: root
+                    group: root
+          - name: edit the sshd_config file
+            lineinfile:
+                    path: /etc/ssh/sshd_config
+                    regexp: '^#Banner'
+                    line: 'Banner /etc/issue'
+          - name: create a simlink to /etc/issue from /etc/issue.net
+            file:
+                    src: /etc/issue
+                    dest: /etc/issue.net
+                    state: link
+                    owner: root
+                    group: root
+                    force: yes
+
+          - name: restart the sshd service
+            service:
+                    name: sshd
+                    state: restarted
+...

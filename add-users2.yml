@@ -1,0 +1,10 @@
+---
+- name: add the group dataspecialists
+  group:
+          name: dataspecialists
+          state: present
+
+- name: add multiple users using a loop
+  user:
+          name: "{{ item.name }}"
+          group: "{{ item.group }}"

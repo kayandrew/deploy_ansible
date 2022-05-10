@@ -1,0 +1,19 @@
+---
+- name: create many users
+  gather_facts: false
+  hosts: all
+  become: true
+  gather_facts: false
+  vars:
+          users:
+                  - andrew
+                  - albert
+                  - christian
+                  - edward
+  tasks:
+          - name: create users
+            user:
+                    name: "{{ item }}"
+                    state: present
+            loop: "{{ users }}"
+

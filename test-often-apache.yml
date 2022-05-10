@@ -1,0 +1,52 @@
+---
+- name: test often
+  hosts: webservers
+  vars:
+          - apache_pkg: httpd
+          - apache_svc: httpd
+          - firewall_svc: firewalld
+          - apache_port: http
+  become: true
+  tasks:
+          - name: Install apache
+            yum:
+                    name: "{{ apache_pkg }}"
+                    state: latest
+          - name: start and enable the {{ apache_svc }}
+            systemd:
+                    name: "{{ apache_svc }}"
+                    state: started
+                    enabled: true
+          - name: start the {{ firewall_svc }} service
+            systemd:
+                    name: "{{ firewall_svc }}"
+                    state: started
+                    enabled: true
+          - name: add the {{ apache_port }} to the firewall
+            firewalld:
+                    service: "{{ apache_port }}"
+                    immediate: true
+                    permanent: true
+                    state: enabled
+          - name: add content via the index.html
+            copy:
+                    content: "This website is my {{ ansible_facts['fqdn'] }} website\n"
+                    dest: /var/www/html/index.html
+            tags: content
+            notify: restart apache
+          - name: restart the {{ apache_svc }} service
+            systemd:
+                    name: "{{ apache_svc }}"
+                    state: restarted
+          - name: test my apache configuration
+            uri:
+                    url: "http://{{ ansible_facts['fqdn'] }}"
+                    return_content: yes
+            register: this
+            failed_when: "'website' not in this.content"
+
+  handlers:
+          - name: restart apache
+            systemd:
+                    name: "{{ apache_svc }}"
+                    state: restarted

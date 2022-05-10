@@ -1,0 +1,73 @@
+---
+# tasks file for sample-mysql
+#
+- name: create a primary partition of size 800M on /dev/sdb
+  parted:
+          device: /dev/sdb
+          number: 1
+          part_end: 800MB
+          part_type: primary
+          flags: lvm
+          state: present
+- name: create an lvm volume group called vg_database
+  lvg:
+          vg: vg_database
+          pvs: /dev/sdb1
+- name: create a logical volume called lv_mysql
+  lvol:
+          vg: vg_database
+          lv: lv_mysql
+          size: 512
+- name: Format the logical volume with xfs file system
+  filesystem:
+          fstype: xfs
+          dev: /dev/vg_database/lv_mysql
+- name: create a mount point /mnt/mysql_backups
+  file:
+          path: /mnt/mysql_backups
+          state: directory
+- name: mount the fs on the mount point
+  mount:
+          path: /mnt/mysql_backups
+          src: /dev/sdb1
+          fstype: xfs
+          state: mounted
+  ignore_errors: yes
+- name: Install mysql-server
+  yum:
+          #name: mysql-community-server
+          name: "{{ item }}"
+          state: latest
+  loop: "{{ my_pkgs }}"
+- name: generate mysql server config file
+  template:
+          src: my.cnf.j2
+          dest: /etc/my.cnf.d/mysql-server.cnf
+- name: start and enable mysql server
+  service:
+          name: mysqld
+          state: started
+          enabled: true
+- name: allow port TCP 3306 though the firewall
+  firewalld:
+          #service: mysql
+          port: 3306/tcp
+          permanent: true
+          immediate: true
+          state: enabled
+- name: create the root password for mysql
+  mysql_user:
+          login_host: 'localhost'
+          login_user: 'root'
+          login_password: ''
+          name: 'root'
+          password: "{{ database_password }}"
+          state: present
+  ignore_errors: yes
+  notify: restart mysql-server
+  #- name: generate mysql server config file
+  #template:
+  #        src: my.cnf.j2
+  #        dest: /etc/my.cnf.d/mysql-server.cnf
+  #notify: restart mysql-server
+

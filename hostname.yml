@@ -1,0 +1,8 @@
+---
+- name: reset hostname
+  hosts: managednode1.example.com
+  become: true
+  tasks:
+          - name: reset hostname
+            hostname:
+                    name: managednode1.example.com

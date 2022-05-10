@@ -1,0 +1,10 @@
+---
+- name: start the apache service
+  service:
+          name: "{{ webservice }}"
+          state: started
+
+- name: add content to index.html
+  copy:
+          content: 'This website belongs to  Kimberley'
+          dest: /var/www/html/index.html

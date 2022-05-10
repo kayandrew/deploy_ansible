@@ -1,0 +1,32 @@
+---
+- name: install apache using line in file module
+  hosts: webservers
+  become: true
+  tasks:
+          - name: install 
+            yum:
+                    name: httpd
+                    state: latest
+          - name: start service
+            service:
+                    name: httpd
+                    state: started
+                    enabled: true
+          - name: create index.html
+            lineinfile:
+                    path: /var/www/html/index.html
+                    insertafter: '^Distribution'
+                    line: 'Hi this is  {{ ansible_hostname }}'
+                    mode: 0644
+                    owner: root
+                    group: root
+          - name: all in firewall
+            firewalld:
+                    service: http
+                    permanent: true
+                    immediate: true
+                    state: enabled
+          - name: retsrat 
+            service:
+                    name: httpd
+                    state: restarted

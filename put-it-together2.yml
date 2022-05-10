@@ -1,0 +1,34 @@
+---
+- name: bring it all together 
+  hosts: webservers
+  become: true
+  tasks:
+          - name: include add-apache2.yml
+            import_tasks: add-apache2.yml
+            vars:
+                    - webpkg: httpd
+                    - websvc: http
+
+          - name: import the add-users2.yml
+            include_tasks: add-users2.yml
+            loop:
+                    - name: datauser1
+                      group: dataspecialists
+                    - name: datauser2
+                      group: dataspecialists
+                    - name: datauser3
+                      group: dataspecialists
+
+          - name: inlude the add-content2.yml
+            import_tasks: add-content2.yml
+            vars:
+                    - webservice: httpd
+                     
+
+          - name: restart httpd
+            service:
+                    name: httpd
+                    state: restarted
+
+          
+

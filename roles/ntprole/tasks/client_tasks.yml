@@ -1,0 +1,21 @@
+# This is to be performed only on ntp clients
+#
+- name: Configure chrony on client machines
+  debug:
+          msg: 'THis runs only on managednode2.example.com'
+- name: install chrony
+  package:
+          name: chrony
+          state: latest
+- name: start and enable the service
+  service:
+          name: chronyd
+          state: started
+          enabled: true
+- name: edit the chrony.conf file
+  lineinfile:
+          path: /etc/chrony.conf
+          regexp: '^pool'
+          line: 'server managednode1.example.com'
+          state: present
+  notify: restart client chronyd

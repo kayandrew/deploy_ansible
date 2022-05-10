@@ -1,0 +1,28 @@
+---
+- name: create a partition 
+  hosts: webservers
+  become: true
+  tasks:
+          - name: create a partition on sdb
+            parted:
+                    device: /dev/sdb
+                    number: 1
+                    part_end: 300MB
+                    part_type: primary 
+                    state: present
+          - name: create a filesystem
+            filesystem:
+                    dev: /dev/sdb1
+                    fstype: xfs
+          - name: create a mount point
+            file:
+                    path: /mnt/mymount
+                    state: directory
+
+          - name: mount the fs on the mount point
+            mount:
+                    path: /mnt/mymount
+                    src: /dev/sdb1
+                    fstype: xfs
+                    state: mounted
+...

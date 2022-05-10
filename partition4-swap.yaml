@@ -1,0 +1,21 @@
+---
+- name: create a swap partition
+  hosts: webservers
+  become: true
+  tasks:
+          - name: create a partition on sdb
+            parted:
+                    device: /dev/sdb
+                    number: 1
+                    part_start: 2MiB
+                    part_end: 500MiB
+                    part_type: primary
+                    state: present
+
+          - name: format /dev/sdb1 with swap fs
+            filesystem:
+                    dev: /dev/sdb1
+                    fstype: swap
+
+          - name: mmount the swap 
+            command: 'swapon /dev/sdb1'

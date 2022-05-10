@@ -1,0 +1,8 @@
+---
+- name: add apache to firewall
+  firewalld:
+          service: "{{ firewallpkg }}"
+          permanent: true
+          immediate: true
+          state: enabled
+...

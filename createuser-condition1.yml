@@ -1,0 +1,10 @@
+---
+- name: create a user based on a condition
+  hosts: webservers
+  become: true
+  tasks:
+          - name: create a user if ansible_nodename is equal to managednode1.example.com
+            user:
+                    name: node1user
+                    state: present
+            when: ansible_nodename == 'managednode1.example.com'

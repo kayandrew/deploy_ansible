@@ -1,0 +1,41 @@
+---
+- name: Test the host execution order
+  hosts: all
+  order: reverse_sorted
+  become: false
+  vars:
+          - home: Jerusalem
+          - names:
+                  - john
+                  - james
+                  - andrew
+                  - peter
+  pre_tasks:
+          - name: run a debug module
+            debug:
+                    msg: "Welcome to {{ home }}"
+  tasks:
+          - name: create users
+            user:
+                    name: "{{ item }}"
+                    state: absent
+            loop: "{{ names }}"
+            become: true
+  post_tasks:
+          - name: remove apache from firewall
+            command: firewall-cmd --permanent --remove-service http
+            ignore_errors: yes
+            become: true
+            tags: one
+          - name: bounce the firewall service
+            systemd:
+                    name: firewalld
+                    state: restarted
+            tags: two
+            become: true
+          - name: remove apache role
+            yum:
+                    name: httpd
+                    state: absent
+            become: true
+            tags: three

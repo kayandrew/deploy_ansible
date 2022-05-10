@@ -1,0 +1,13 @@
+---
+- name: create a cron job
+  hosts: webservers
+  become: true
+  tasks:
+          - name: cron job
+            cron:
+                    name: "echo hello"
+                    user: "root"
+                    minute: "48"
+                    hour: "21"
+                    job: "/bin/echo hello > /root/hello.txt"
+

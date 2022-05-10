@@ -1,0 +1,12 @@
+---
+- name: create a dynamic file on managednode
+  hosts: webservers
+  vars:
+          - admin_user: admin1
+  become: true
+  tasks:
+          - name: copy os.j2 to managed hosts
+            template:
+                    src: os.j2
+                    dest: /tmp/mytemplate.txt
+...

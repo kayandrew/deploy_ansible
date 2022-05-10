@@ -1,0 +1,22 @@
+---
+- name: modify the content of /etc/issue
+  hosts: all
+  become: true
+  tasks:
+          - name: copy the file over
+            copy:
+                    content: "Development\n"
+                    dest: /etc/issue
+            when: inventory_hostname in groups['dev']
+          - name: copy file over
+            copy:
+                    content: "Test\n"
+                    dest: /etc/issue
+            when: inventory_hostname in groups['test']
+          - name: copy file over
+            copy:
+                    content: "Production\n"
+                    dest: /etc/issue
+            when: inventory_hostname in groups['prod']
+
+

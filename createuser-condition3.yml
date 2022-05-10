@@ -1,0 +1,11 @@
+---
+- name: create user if ansible_distribution_major_version is 7
+  hosts: servers
+  become: true
+  tasks:
+          - name: create a user if ansible_distribution_major_version is 7
+            user:
+                    name: distrouser
+                    state: present
+            when: ansible_distribution_major_version == '7'
+...

@@ -1,0 +1,27 @@
+---
+# tasks file for apache
+#
+- name: install apache
+  yum:
+          name: httpd
+          state: present
+- name: enable and start the service
+  service:
+          name: httpd
+          state: started
+          enabled: true
+- name: start and enable firewalld
+  service:
+          name: firewalld
+          state: started
+          enabled: true
+- name: allow http in the firewall
+  firewalld:
+          service: http
+          immediate: true
+          permanent: true
+          state: enabled
+- name: copy index.html.j2 to index.html
+  template:
+          src: index.html.j2
+          dest: /var/www/html/index.html

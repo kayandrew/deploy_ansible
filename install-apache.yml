@@ -1,0 +1,6 @@
+---
+- name: Install apache
+  yum:
+          name: "{{ webpkg }}"
+          state: latest
+...

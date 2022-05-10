@@ -1,0 +1,6 @@
+---
+- name: execute httpd role
+  hosts: webservers
+  become: true
+  roles:
+          - apacherole 

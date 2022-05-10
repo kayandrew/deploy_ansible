@@ -1,0 +1,18 @@
+---
+- name: Time Synchronisation between all nodes
+  hosts: all
+  become: true
+  vars:
+          timesync_ntp_provider: chrony
+          timesync_ntp_servers:
+                  - hostname: 172.24.3.137
+                    iburst: yes
+          timezone: America/New_York
+  roles:
+          - rhel-system-roles.timesync
+  tasks:
+          - name: set timezone
+            timezone:
+                    name: "{{ timezone }}"
+
+

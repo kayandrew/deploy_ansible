@@ -1,0 +1,18 @@
+---
+- name: create a list of users using loop
+  hosts: webservers
+  become: true
+  tasks:
+          - name: create group
+            group:
+                    name: admins
+                    gid: 5656
+                    state: present
+          - name: create user
+            user:
+                    name: "{{ item.name }}"
+                    group: "{{ item.group }}"
+                    state: present
+            loop:
+                    - { name: 'user1', group: 'admins' }
+                    - { name: 'user2', group: 'admins' }

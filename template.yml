@@ -1,0 +1,9 @@
+---
+- name: test using lookup and templates
+  hosts: balancer
+  become: false
+  tasks:
+          - name: use the lookup plugin
+            debug:
+                    msg: "{{ lookup('template','temp.j2') }}"
+

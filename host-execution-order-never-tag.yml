@@ -1,0 +1,29 @@
+---
+- name: Test the host execution order
+  hosts: balancer
+  order: reverse_inventory
+  become: false
+  serial: 2
+  vars:
+          - home: Jerusalem
+          - names:
+                  - john
+                  - james
+                  - andrew
+                  - peter
+  pre_tasks:
+          - name: run a debug module
+            debug:
+                    msg: "Welcome to {{ home }}"
+  tasks:
+          - name: create users
+            user:
+                    name: "{{ item }}"
+                    state: present
+            loop: "{{ names }}"
+            become: true
+  post_tasks:
+          - name: include the third apache role
+            include_role:
+                    name: third-apache-role
+            tags: never

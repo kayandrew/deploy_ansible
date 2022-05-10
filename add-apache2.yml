@@ -1,0 +1,13 @@
+---
+- name: install apache
+  yum:
+          name: "{{ webpkg }}"
+          state: latest
+
+- name: add apache to firewall
+  firewalld:
+          service: "{{ websvc }}"
+          permanent: true
+          immediate: true
+          state: enabled
+

@@ -1,0 +1,24 @@
+---
+- name: execute third-apache-role
+  become: false
+  hosts: balancer
+  gather_facts: true
+  pre_tasks:
+          - name: first debug task
+            debug:
+                    msg: "THis message should be displayed befor the third-apache-role executes"
+
+  roles:
+          - third-apache-role
+  tasks:
+          - name: second debug task to run immediately after the role
+            debug:
+                    msg: "This task was run afetr the role"
+  post_tasks:
+          - name: test the configuration of my webserver
+            uri:
+                    url: http://{{ ansible_facts['fqdn'] }}:86
+                    return_content: yes
+            register: this
+            failed_when: "'website' not in this.content"
+

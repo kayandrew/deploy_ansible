@@ -1,0 +1,7 @@
+---
+- name: download haproxy role
+  src: http://materials.example.com/exam/haproxy.tar.gz
+  name: balancer
+- name: download phpinfo role
+  src: http://materials.example.com/exam/phpinfo.tar.gz
+  name: phpinfo

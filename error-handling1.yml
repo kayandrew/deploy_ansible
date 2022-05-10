@@ -1,0 +1,14 @@
+---
+- name: testing for errors
+  hosts: webservers
+  become: true
+  tasks:
+          - name: install httpd
+            yum:
+                    name: http
+                    state: latest
+          - name: create a file
+            file:
+                    path: /tmp/myerror.txt
+                    state: touch
+...

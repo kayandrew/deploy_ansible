@@ -1,0 +1,31 @@
+---
+- name: create users using user_list and locker.yml
+  hosts: dev test prod
+  become: true
+  vars_files:
+          - user_list.yml
+          - locker.yml
+  tasks:
+          - name: create group devops and opsmgr
+            group:
+                    name: "{{ item }}"
+                    state: present
+            loop:
+                    - devops
+                    - opsmgr
+          - name: create the first user
+            user:
+                    name: "{{ item.name }}"
+                    state: present
+                    groups: devops
+                    password: "{{ PW_developer|password_hash ('sha512') }}"
+            loop: "{{ users }}"
+            when: (inventory_hostname in groups['dev'] or inventory_hostname in groups['test']) and item.job == "developer"
+          - name: create second user
+            user:
+                    name: "{{ item.name }}"
+                    state: present
+                    groups: opsmgr
+                    password: "{{ PW_manager|password_hash ('sha512') }}"
+            loop: "{{ users }}"
+            when: (inventory_hostname in groups['prod']) and item.job == "manager"

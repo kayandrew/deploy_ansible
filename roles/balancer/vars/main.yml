@@ -1,0 +1,16 @@
+firewall_rules:
+  # Allow 80/tcp connections
+  - port: 80/tcp
+  # Allow http requests from the load_balancer.
+  - zone: internal
+    service: http
+    source: "172.25.250.10"
+
+haproxy_appservers:
+  - name: serverb.lab.example.com
+    ip: 172.25.250.11
+    backend_port: 80
+
+  - name: serverc.lab.example.com
+    ip: 172.25.250.12
+    backend_port: 80

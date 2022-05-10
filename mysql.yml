@@ -1,0 +1,6 @@
+---
+- name: run the sample-mysql role
+  hosts: balancer
+  become: true
+  roles:
+          - sample-mysql

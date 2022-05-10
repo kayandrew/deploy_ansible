@@ -1,0 +1,11 @@
+---
+- name: create manalo
+  hosts: webservers
+  become: true
+  tasks:
+          - name: create a user manalo
+            user:
+                    name: manalo
+                    uid: 3533
+                    state: present
+                    password: $6$QcbkLo.nA8mCi7Ht$radNWCjaMmd4gC2iRgFQp/0XlYQFqAYj5LNEgc.p6mg.JIg6vUGku1ejUuEn.B6pkbPnjPh4iUrgniR0cP72n0

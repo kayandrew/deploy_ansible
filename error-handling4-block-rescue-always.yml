@@ -1,0 +1,38 @@
+---
+- name: some tasks to execute
+  hosts: balancer
+  become: true
+  gather_facts: false
+  tasks:
+          - name: create my block
+            block:
+                    - name: update my package
+                      yum:
+                              name: http
+                              state: latest
+                    - name: create a user
+                      user:
+                              name: "{{ item.name }}"
+                              group: "{{ item.group }}"
+                              state: present
+                      loop:
+                              - name: looopuser1
+                                group: dba
+                              - name: loopuser2
+                                group: dba
+                              - name: loopuser3
+                                group: dba
+
+            rescue:
+                    - name: rescue this operation
+                      copy:
+                              content: "proof that if a block fails, this file will create\n"
+                              dest: /tmp/myrescuedfile.txt
+
+            always:
+                    - name: always restart the apache service
+                      yum:
+                              name: httpd
+                              state: latest
+
+

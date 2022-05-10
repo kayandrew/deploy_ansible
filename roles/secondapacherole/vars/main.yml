@@ -1,0 +1,9 @@
+---
+# vars file for secondapacherole
+webpkg: httpd
+websvc: httpd
+firewallsvc: http
+private: "US Government"
+admin: Andrew
+
+

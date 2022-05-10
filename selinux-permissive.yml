@@ -1,0 +1,13 @@
+---
+- name: set selinux to permissive
+  hosts: webservers
+  become: true
+  tasks:
+          - name: put selinux in permissive mode after a reboot
+            lineinfile:
+                    path: /etc/selinux/config
+                    regexp: '^SELINUX=enforcing'
+                    line: 'SELINUX=permissive'
+          - name: put selinux in permissive mode imediately
+            shell:
+                    cmd: '/sbin/setenforce 0'

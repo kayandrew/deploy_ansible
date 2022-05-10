@@ -1,0 +1,9 @@
+---
+- name: update all managed hosts
+  hosts: all
+  become: true
+  tasks:
+          - name: update all packages
+            yum:
+                    name: '*'
+                    state: latest

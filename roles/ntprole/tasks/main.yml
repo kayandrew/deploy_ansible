@@ -1,0 +1,13 @@
+# Brining the server_tasks.yml and client_task.yml together
+#
+- name: bringing it all together
+  hosts: webservers
+  become: true
+  tasks:
+          - name: include the server_tasks.yml file
+            include_tasks: server_tasks.yml
+            when: ansible_nodename == 'managednode1.example.com'
+          - name: include the client_tasks.yml file
+            include_tasks: client_tasks.yml
+            when: ansible_nodename == 'managednode2.example.com'
+

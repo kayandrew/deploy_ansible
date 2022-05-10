@@ -1,0 +1,28 @@
+---
+- name: install, copy config file over, add to firewall, start service
+  hosts: webservers
+  become: true
+  vars:
+          - webpkg: httpd
+          - webservice: httpd
+          - firewallpkg: http
+
+  tasks:
+          - name: install apache
+            yum:
+                    name: "{{ webpkg }}"
+                    state: latest
+          - name: copy index file over
+            copy:
+                    src: /tmp/index.html
+                    dest: /var/www/html/index.html
+          - name: add to firewall
+            firewalld:
+                    service: "{{ firewallpkg }}"
+                    permanent: true
+                    immediate: true
+                    state: enabled
+          - name: start the service
+            service:
+                    name: "{{ webservice }}"
+                    state: started

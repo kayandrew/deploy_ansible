@@ -1,0 +1,6 @@
+---
+- name: run the sample apache role from Mr FRancis question 10
+  hosts: balancer
+  become: true
+  roles:
+          - sample-apache

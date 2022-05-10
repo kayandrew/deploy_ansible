@@ -1,0 +1,27 @@
+---
+- name: create an additonal swap
+  hosts: managednode1.example.com
+  become: true
+  tasks:
+          - name: create a swap partition
+            parted:
+                    device: /dev/sdb
+                    number: 2
+                    part_start: 530MB
+                    part_end: 830MB
+                    part_type: primary
+                    state: present
+          - name: create swap filesystem
+            filesystem:
+                    dev: /dev/sdb2
+                    fstype: swap
+          - name: mount the file system
+            shell:
+                    cmd: 'swapon /dev/sdb2'
+          - name: mount
+            lineinfile:
+                    path: /etc/fstab
+                    line: '/dev/sdb2    swap    swap    defaults   0 0'
+          - name: command to mount all
+            shell:
+                    cmd: 'swapon -a'

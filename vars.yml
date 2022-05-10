@@ -1,0 +1,19 @@
+---
+- name: remove users from the tags playbook
+  gather_facts: false
+  hosts: all
+  become: true
+  gather_facts: false
+  vars:
+          pkgs:
+                  - httpd
+                  - httpd-tools
+                  - mod_ssl
+                  - mariadb
+                  - autofs
+                  - nfs-utils
+  tasks:
+          - name: install packages
+            yum:
+                    name: "{{ pkgs }}"
+                    state: present

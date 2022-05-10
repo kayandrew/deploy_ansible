@@ -1,0 +1,69 @@
+---
+# tasks file for secondapacherole
+- name: Install httpd
+  package:
+          name: "{{ webpkg }}"
+          state: latest
+- name: start the apache service
+  service:
+          name: "{{ websvc }}"
+          state: started
+          enabled: true
+- name: add the service to the firewall
+  firewalld:
+          service: "{{ firewallsvc }}"
+          permanent: true
+          immediate: true
+          state: enabled
+- name: change the default port
+  lineinfile:
+          path: /etc/httpd/conf/httpd.conf
+          regexp: '^Listen'
+          line: 'Listen 85'
+          state: present
+- name: add the new port to the firewall
+  firewalld:
+          port: 85/tcp
+          permanent: true
+          immediate: true
+          state: enabled
+- name: add the right selinux port type
+  seport:
+          ports: 85
+          proto: tcp
+          setype: http_port_t
+          state: present
+- name: edit the index.html file
+  copy:
+          dest: /var/www/html/index.html
+          content: "<html><h1>The website belongs to Norman Taku</h1></html>"
+  notify: restart apache
+- name: copy the motd.j2
+  template:
+          src: motd.j2
+          dest: /etc/motd
+          owner: root
+          group: root
+- name: copy the issue.j2
+  template:
+          src: issue.j2
+          dest: /etc/issue
+          owner: root
+          group: root
+- name: edit the /etc/ssh/sshd_config file
+  lineinfile:
+          path: /etc/ssh/sshd_config
+          regexp: '^#Banner'
+          line: 'Banner /etc/issue'
+          state: present
+- name: create a simlink
+  file:
+          src: /etc/issue
+          dest: /etc/issue.net
+          state: link
+          force: true
+          owner: root
+          group: root
+  notify: restart sshd
+...
+

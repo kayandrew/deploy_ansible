@@ -1,0 +1,53 @@
+---
+- name: install and configure apache on port 93 using tags as well
+  hosts: webservers
+  become: true
+  vars:
+          - webpkg: httpd
+          - servicepkg: httpd
+          - webport: 93/tcp
+          - selinuxport: 93
+  tasks:
+          - name: install httpd
+            yum:
+                    name: "{{ webpkg }}"
+                    state: latest
+            tags:
+                    - installapache
+          - name: start apache service
+            service:
+                    name: "{{ servicepkg }}"
+                    state: started
+                    enabled: true
+            tags:
+                    - startapache
+
+          - name: change listening port from 91 to 93
+            lineinfile:
+                    path: /etc/httpd/conf/httpd.conf
+                    state: present
+                    regexp: '^Listen'
+                    line: Listen 93
+          - name: add port 93 to firewall
+            firewalld:
+                    port: "{{ webport }}"
+                    permanent: true
+                    immediate: true
+                    state: enabled
+            tags:
+                    - addporttofirewall
+          - name: add proper selinux port type to port 93
+            seport:
+                    ports: "{{ selinuxport }}"
+                    proto: tcp
+                    setype: http_port_t
+                    state: present
+                    reload: true
+          - name: restart apache service
+            service:
+                    name: "{{ servicepkg }}"
+                    state: restarted
+                    enabled: true
+            tags:
+                    - always
+...

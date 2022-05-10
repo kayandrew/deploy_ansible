@@ -1,0 +1,25 @@
+---
+- name: testing the use of forks for parallelism
+  hosts: webservers
+  become: true
+  serial: 1
+  tasks:
+          - name: testing parallelism
+            user:
+                    name: "{{ item }}"
+                    state: present
+            loop:
+                    - forkuser1
+                    - forkuser2
+                    - forkuser3
+          - name: second task
+            file:
+                    path: /tmp/myforkfile.txt
+                    state: touch
+                    owner: root
+                    group: root
+
+          - name: third task
+            yum:
+                    name: tree
+                    state: latest

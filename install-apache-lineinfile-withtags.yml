@@ -1,0 +1,37 @@
+---
+- name: install apache on port 91
+  hosts: webservers
+  become: true
+  tasks:
+          - name: install httpd
+            yum:
+                    name: httpd
+                    state: latest
+            tags:
+                    - installapache
+          - name: listen on port 91
+            lineinfile:
+                    path: /etc/httpd/conf/httpd.conf
+                    state: present
+                    regexp: '^#Listen'
+                    line: Listen 91
+          - name: add port 91 to the firewall
+            firewalld:
+                    port: 91/tcp
+                    permanent: true
+                    immediate: true
+                    state: enabled
+
+          - name: add the right file context to the port
+            seport:
+                    ports: 91
+                    proto: tcp
+                    setype: http_port_t
+                    state: present
+                    reload: true
+          - name: restart the service
+            service:
+                    name: httpd
+                    state: started
+            tags:
+                    - always

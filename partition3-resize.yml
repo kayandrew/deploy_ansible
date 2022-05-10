@@ -1,0 +1,11 @@
+---
+- name: resize the lv02 log vol
+  hosts: webservers
+  become: true
+  tasks:
+          - name: resize lv02
+            lvol:
+                    vg: vg02
+                    lv: lv02
+                    size: 170
+                    resizefs: true

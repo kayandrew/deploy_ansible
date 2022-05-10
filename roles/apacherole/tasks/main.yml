@@ -1,0 +1,55 @@
+---
+# tasks file for apacherole
+- name: install apache
+  package:
+          name: "{{ webpkg }}"
+          state: latest
+- name: start and enable the service
+  service:
+          name: "{{ websvc }}"
+          state: started
+          enabled: true
+
+- name: add the service to the firewall
+  firewalld:
+          service: "{{ firewallsvc }}"
+          permanent: true
+          immediate: true
+          state: enabled
+- name: create a backup directory
+  file:
+          path: /etc/httpd/conf/backup
+          state: directory
+- name: back up the httpd.conf file to the backup directory
+  copy:
+          src: /etc/httpd/conf/httpd.conf
+          dest: /etc/httpd/conf/backup/httpd.conf
+          remote_src: yes
+- name: make changes to the httpd.conf file
+  lineinfile:
+          path: /etc/httpd/conf/httpd.conf
+          regexp: 'Listen 80'
+          line: 'Listen 81'
+          state: present
+- name: add proper port type to port 81
+  seport:
+          ports: 81
+          proto: tcp
+          setype: http_port_t
+          state: present
+- name: add port 81 to firewall
+  firewalld:
+          port: 81/tcp
+          permanent: true
+          immediate: true
+          state: enabled
+- name: add content to index.html file
+  copy:
+          content: "This website belongs to apache role"
+          dest: /var/www/html/index.html
+  notify: restart apache
+- name: copy the motd.j2 file over
+  template:
+          src: motd.j2
+          dest: /etc/motd
+  tags: motd

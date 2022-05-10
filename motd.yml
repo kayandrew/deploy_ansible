@@ -1,0 +1,13 @@
+---
+- name: creat a motd on my managed hosts
+  hosts: webservers
+  become: true
+  vars:
+          - admin_user: admin1
+  tasks:
+          - name: create motd on managed hosts
+            template:
+                    src: motd.j2
+                    dest: /etc/motd
+...
+

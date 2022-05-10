@@ -1,0 +1,23 @@
+---
+- name: install php & httpd package
+  yum:
+          name:
+                  - php
+                  - httpd
+          state: present
+ 
+- name: Ensure SELinux allows httpd connections to a remote database
+  seboolean:
+        name: httpd_can_network_connect_db
+        state: true
+        persistent: true
+
+- name: creating hello.php using template
+  template: src=hello.j2 dest=/var/www/html/hello.php
+
+- name: start & enable httpd service 
+  service: name=httpd state=restarted enabled=yes
+
+- name: allow httpd service through firewall
+  firewalld: service=http permanent=yes immediate=yes state=enabled
+

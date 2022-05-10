@@ -1,0 +1,12 @@
+---
+- name: reboot my webservers
+  hosts: webservers
+  become: true
+  tasks:
+          - name: reboot my servers
+            reboot:
+                    msg: "This server is being rebooted"
+                    reboot_timeout: 600
+                    search_paths: /usr/sbin/reboot
+                    test_command: whoami
+

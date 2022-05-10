@@ -1,0 +1,32 @@
+---
+- name: Install apache, start service, add to firewall
+  hosts: webservers
+  become: true
+  vars:
+          - webpkg: httpd
+          - webservice: httpd
+          - firewallpkg: http
+  tasks:
+          - name: Install apache
+            yum:
+                    name: "{{ webpkg }}"
+                    state: latest
+
+          - name: alter the index file
+            copy:
+                    content: "<html><h1><strong>Andrew Taku</strong></h1></html>"
+                    dest: /var/www/html/index.html
+
+          - name: add apache to the firewall
+            firewalld:
+                    service: "{{ firewallpkg }}"
+                    permanent: true
+                    immediate: true
+                    state: enabled
+
+          - name: start the service after changing the content of idex file
+            service:
+                    name: "{{ webservice }}"
+                    state: started
+                    enabled: true
+...

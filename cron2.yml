@@ -1,0 +1,12 @@
+---
+- name: cron job
+  hosts: webservers
+  become: true
+  tasks:
+          - name: cron job
+            cron:
+                    name: 'my second cron job'
+                    minute: '01'
+                    hour: '22'
+                    user: 'loopuser1'
+                    job: '/bin/echo bonjour > /home/loopuser1/hello.txt'

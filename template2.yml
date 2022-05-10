@@ -1,0 +1,9 @@
+---
+- name: use the lookup plugin to display the content of file.txt
+  hosts: balancer
+  become: false
+  tasks:
+          - name: display content of file.txt
+            debug:
+                    msg: "{{ lookup('file','myfile.txt',errors='warn') }}"
+

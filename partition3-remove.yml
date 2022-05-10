@@ -1,0 +1,30 @@
+---
+- name: remove lv02, vg02, pvs and /dev/sdb1 and sdb2
+  hosts: webservers
+  become: true
+  tasks:
+          - name: unmount lv02
+            mount:
+                    path: /mnt/mymount
+                    state: absent
+          - name: remove lv02
+            lvol:
+                    vg: vg02
+                    lv: lv02
+                    state: absent
+                    force: yes
+          - name: remove vg
+            lvg:
+                    vg: vg02
+                    pvs: /dev/sdb2
+                    state: absent
+
+          - name: remove partition
+            parted:
+                    device: /dev/sdb
+                    number: "{{ item }}"
+                    state: absent
+            loop:
+                    - 1
+                    - 2
+                               

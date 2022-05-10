@@ -1,0 +1,12 @@
+---
+# handlers file for ntprole
+- restart server chronyd
+  service:
+          name: chronyd
+          state: restarted
+
+- restart client chronyd
+  service:
+          name: chronyd
+          state: restarted
+

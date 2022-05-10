@@ -1,0 +1,5 @@
+---
+# vars file for third-apache-role
+webpkg: httpd
+websvc: httpd
+firewallsvc: http

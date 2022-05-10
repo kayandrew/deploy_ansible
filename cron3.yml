@@ -1,0 +1,37 @@
+---
+- name: create a cron job for user paula
+  hosts: managednode1.example.com
+  become: true
+  tasks:
+          - name: create user paula
+            user:
+                    name: paula
+                    state: present
+                    password: $6$oE/IvKOM1SLT21nZ$DM1u3HvOdCOjLRGSc//z0zvRyeNHtsexsvcjp.rHCnURhcHBKllOHt4b.hggIdQTUr1vRU5Pi/AXcsjavFgVn/
+          - name: create the cron.allow file
+            file:
+                    path: /etc/cron.allow
+                    state: touch
+                    owner: root
+                    group: root
+                    mode: 0644
+          - name: put paula in the cron.allow file
+            lineinfile:
+                    path: /etc/cron.allow
+                    line: 'paula'
+          - name: make sure that paula is not in the deny file
+            lineinfile:
+                    path: /etc/cron.deny
+                    regexp: '^paula'
+                    line: '#paula'
+          - name: create a cron job for user paula
+            cron:
+                    name: just an echo
+                    minute: 10
+                    hour: 23
+                    job: "/usr/bin/echo hello > /home/paula/myhello.txt"
+                    user: paula
+          - name: restart crond
+            service:
+                    name: crond
+                    state: restarted

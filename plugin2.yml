@@ -1,0 +1,20 @@
+---
+- name: copy the content of the /etc/hosts and /etc/group info
+  hosts: balancer
+  become: false
+  gather_facts: false
+  vars:
+          - mydata2: "{{ lookup('file','/etc/hosts','/etc/group') }}"
+          - home: Jerusalem
+  pre_tasks:
+          - name: run a debug message
+            debug:
+                    msg: "Welcome to {{ home }}"
+  tasks:
+          - name: copy mydata2 over
+            copy:
+                    content: "{{ mydata2 }}"
+                    dest: /tmp/mydata2
+            become: true
+...
+

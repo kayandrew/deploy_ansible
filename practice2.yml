@@ -1,0 +1,36 @@
+---
+- name: Deploy web services
+  hosts: balancer
+  become: false
+  tasks:
+          - block:
+                  - name: Ensure httpd is installed
+                    yum:
+                            name: httpd
+                            state: installed
+                  - name: Start and enable webserver
+                    service:
+                            name: httpd
+                            state: started
+                            enabled: yes
+                  - name: add rule to firewall
+                    firewalld:
+                            service: http
+                            permanent: true
+                            immediate: true
+                            state: enabled
+                  - name: create an index.html file
+                    copy:
+                            content: "welcome to {{ ansible_hostname }}\n"
+                            dest: /var/www/html/index.html
+                  - name: restart apache service
+                    systemd:
+                            name: httpd
+                            state: restarted
+            become: true
+          - name: Test website from itself, do not become
+            uri:
+                    url: http://{{ ansible_fqdn }}
+                    return_content: yes
+            register: webpage
+            failed_when: webpage.status != 200

@@ -1,0 +1,11 @@
+---
+- name: try including a role in a playbook
+  hosts: balancer
+  become: true
+  tasks:
+          - name: run a debug module
+            debug:
+                    msg: "Testing which task executes first"
+          - name: second task 
+            include_role:
+                    name: third-apache-role

@@ -1,0 +1,28 @@
+---
+- name: install haproxy on localhost
+  hosts: localhost
+  become: true
+  tasks:
+          - name: add /etc/hosts loadbalancer entry
+            lineinfile:
+                    path: /etc/hosts
+                    line: "172.24.3.129 loadbalancer"
+          - name: install haproxy
+            yum:
+                    name: haproxy
+                    state: latest
+          - name: copy original haproxy.cfg file
+            copy:
+                    src: /etc/haproxy/haproxy.cfg
+                    dest: /etc/haproxy/haproxy.cfg.original
+          - name: get custom haproxy.conf
+            copy:
+                    src: haproxy.cfg
+                    dest: /etc/haproxy/haproxy.cfg
+          - name: restart and enable haproxy
+            systemd:
+                    name: haproxy
+                    state: restarted
+                    enabled: true
+
+

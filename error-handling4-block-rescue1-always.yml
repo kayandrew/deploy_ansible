@@ -1,0 +1,43 @@
+---
+- name: some tasks to execute
+  hosts: webservers
+  become: true
+  tasks:
+          - name: create my block
+            block:
+                    - name: update my package
+                      yum:
+                              name: httpd
+                              state: latest
+
+                    - name: create the dba group
+                      group:
+                              name: dba
+                              state: present
+
+                    - name: create a user
+                      user:
+                              name: "{{ item.name }}"
+                              groups: "{{ item.groups }}"
+                              state: present
+                      loop:
+                              - name: loopuser1
+                                groups: "dba,wheel"
+                              - name: loopuser2
+                                groups: "dba,wheel"
+                              - name: loopuser3
+                                groups: "dba,wheel"
+
+            rescue:
+                    - name: rescue this operation
+                      copy:
+                              content: 'proof that if a block fails, this file will create'
+                              dest: /tmp/myrescuedfile.txt
+
+            always:
+                    - name: always restart the apache service
+                      yum:
+                              name: httpd
+                              state: latest
+
+

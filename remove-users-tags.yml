@@ -1,0 +1,17 @@
+---
+- name: remove users from the tags playbook
+  gather_facts: false
+  hosts: all
+  become: true
+  vars:
+          people:
+                  - user1
+                  - user2
+                  - user3
+                 
+  tasks:
+          - name: remove users
+            user:
+                    name: "{{ people }}"
+                    state: absent
+                    remove: true

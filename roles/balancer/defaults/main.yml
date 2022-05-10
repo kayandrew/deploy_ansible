@@ -1,0 +1,55 @@
+#Log-level for HAProxy logs
+haproxy_log_level: info
+
+#Port exposed to clients
+haproxy_port: 80
+
+# Name for the default backend
+haproxy_backend_name: app
+
+# Port backend is exposed to
+haproxy_backend_port: 80
+
+# The appservers variable is a list
+# of backend servers that provide
+# the web service that is proxied
+# haproxy.  Each server must define:
+# name, address, port. Below is
+# and example structure:
+# appservers:
+#   - name: serverb.lab.example.com
+#     ip_address: 1.2.3.4
+#     port: 5000
+#   - name: serverc.lab.example.com
+#     ip_address: 1.2.3.5
+#     port: 5000
+#The default is no defined backend servers.
+haproxy_appservers: []
+
+#Socket used to communicate with haproxy service. DO NOT CHANGE
+haproxy_socket: /var/run/haproxy.sock
+# defaults file for firewall
+
+
+# This role requires that firewall_rules variable
+# be defined. The variable is a list of rules, and
+# each rule defines:
+#
+#   service: (optional)
+#   port:    (optional)
+#   zone:    (optional)
+#   source:  (optional)
+#
+# A rule should only define a service or a port.
+# And example definition is:
+#
+# firewall_rules:
+#   - service: http
+#     zone: internal
+#   - port: 8443
+#     source: 192.168.0.2
+
+# By default, no rules are implemented.
+firewall_rules: []
+
+

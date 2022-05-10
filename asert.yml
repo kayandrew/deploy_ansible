@@ -1,0 +1,11 @@
+---
+- name: asert test
+  hosts: balancer
+  become: true
+  tasks:
+          - name: asert
+            assert:
+                    that:
+                            - "'{{ 'Marvin' | lower }}' is eq( 'marvin' )"
+                            - "'{{ 'Marvin' | upper }}' is eq( 'MARVIN' )"
+                            - "'{{ 'marvin' | capitalize }}' is eq( 'Marvin' )"

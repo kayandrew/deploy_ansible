@@ -1,0 +1,7 @@
+---
+- name: start apache service
+  service:
+          name: "{{ websvc }}"
+          state: started
+          enabled: true
+...

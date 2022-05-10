@@ -1,0 +1,8 @@
+---
+# vars file for sample-mysql
+#
+database_password: devops
+my_pkgs:
+        - mysql-server
+        - mysql
+        - python3-PyMySQL

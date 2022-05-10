@@ -1,0 +1,6 @@
+---
+# vars file for apacherole
+webpkg: httpd
+websvc: httpd
+firewallsvc: http
+admin_user: admin1

@@ -1,0 +1,32 @@
+---
+- name: create user accounts according to ex200
+  hosts: webservers
+  become: true
+  vars:
+          - passwd: $6$w2QuiBUqxqC693FA$Yob9JFTW9W36ZiRa7VYTRqiPiPeRl1pX10VMfwyd1YmaI9uCc305fPlatNLilHUFh4Hj0YmGc3tXrWr/eMR0g.
+
+  tasks:
+          - name: create admins group
+            group:
+                    name: admins
+                    state: present
+          - name: create paula
+            user:
+                    name: paula
+                    groups: admins
+                    state: present
+                    password: "{{ passwd }}"
+                    append: yes
+          - name: create kaola
+            user:
+                    name: kaola
+                    state: present
+                    shell: /sbin/nologin
+                    password: "{{ passwd }}"
+          - name: create natasha
+            user:
+                    name: natasha
+                    state: present
+                    group: admins
+                    password: "{{ passwd }}"
+

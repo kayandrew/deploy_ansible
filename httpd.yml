@@ -1,0 +1,84 @@
+---
+- name: install and start apache
+  hosts: prod
+  become: true
+  tasks:
+          - name: install apache
+            yum:
+                    name: httpd
+                    state: present
+          - name: start and enable firewalld
+            service:
+                    name: firewalld
+                    state: started
+                    enabled: true
+          - name: start the service
+            service:
+                    name: httpd
+                    state: started
+                    enabled: true
+          - name: add httpd to the firewall
+            firewalld:
+                    service: http
+                    permanent: true
+                    immediate: true
+                    state: enabled
+          - name: create an index.html file
+            copy:
+                    dest: /var/www/html/index.html
+                    content: "Welcome to my prod servers\n"
+          - name: restart the httpd service
+            service:
+                    name: httpd
+                    state: restarted
+                    enabled: true
+- name: create a few users simply to have 2 plays in one playbook
+  hosts: balancer
+  become: true
+  tags: second-play
+  vars:
+          - users:
+                  - anne
+                  - nancy
+                  - gwenneth
+  tasks:
+          - name: create user aedan
+            user:
+                    name: aedan
+                    comment: developper
+                    generate_ssh_key: yes
+                    ssh_key_bits: 2048
+                    ssh_key_file: ~/.ssh/id_rsa
+            register: user_aedan_created
+            tags: user-aedan
+
+          - name: create a coding group 
+            group:
+                    name: "{{ item }}"
+                    state: present
+            loop:
+                    - dev
+                    - prod
+                    - uat
+          - name: create a user arwel who will be a part of the dev group
+            user:
+                    name: arwel
+                    groups: "dev,prod,uat"
+                    uid: 6666
+          - name: create multiple users from a variable
+            user:
+                    name: "{{ item }}"
+                    state: present
+            loop: "{{ users }}"
+
+          - debug: var=user_aedan_created
+- name: test webserver
+  hosts: localhost
+  become: no
+  tasks:
+          - name: connect to webserver
+            uri:
+                    url: http://192.168.226.130/
+                    return_content: yes
+                    status_code: 200
+...

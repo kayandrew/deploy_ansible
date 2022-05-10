@@ -1,0 +1,34 @@
+---
+- name: install a pkg when ansible_memtotal_ms is greater than 800 and restart pkg only if successful
+  hosts: webservers
+  become: true
+  serial: 50%
+  tasks:
+          - name: install apache 
+            yum:
+                    name: httpd
+                    state: latest
+            when: ansible_memtotal_mb > 800
+            tags:
+                    - installapache
+
+          - name: start apache
+            service:
+                    name: httpd
+                    state: started
+                    enabled: true
+            tags:
+                    - startapache
+
+          - name: add content to index.html
+            copy:
+                    content: "To God be the glory"
+                    dest: /var/www/html/index.html
+            notify:
+                    - restartapache
+  handlers:
+          - name: restartapache
+            service:
+                    name: httpd
+                    state: restarted
+...

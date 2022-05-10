@@ -1,0 +1,4 @@
+This machine is a {{ ansible_facts['distribution'] }} machine
+OS Version: {{ ansible_facts['distribution_version'] }}
+Total Memory: {{ ansible_facts['memtotal_mb'] }}
+Admin: {{ admin_user }}

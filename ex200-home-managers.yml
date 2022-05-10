@@ -1,0 +1,12 @@
+---
+- name: create a directory with special xtics
+  hosts: webservers
+  become: true
+  tasks:
+          - name: create dir /home/managers
+            file:
+                    path: /home/managers
+                    state: directory
+                    group: admins
+                    owner: root
+                    mode: 0774

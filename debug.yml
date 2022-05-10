@@ -1,0 +1,7 @@
+---
+- name: query my inventory file for a list of managed host
+  hosts: 
+  tasks:
+          - name: debug the inventory file
+            debug:
+                    msg: "{{ hosts }}"

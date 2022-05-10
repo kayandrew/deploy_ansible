@@ -1,0 +1,11 @@
+---
+- name: first attempt at using a plugin
+  hosts: balancer
+  become: true
+  vars:
+          mydata: "{{ lookup('file','/etc/hosts') }}"
+  tasks:
+          - name: use the above variable
+            copy:
+                    content: "{{ mydata }}"
+                    dest: /tmp/mydata.txt

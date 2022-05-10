@@ -1,0 +1,22 @@
+---
+- name: remove multiple users in 2 mins
+  hosts: webservers
+  become: true
+  tasks:
+          - name: remove multiple users using the at module
+            at:
+                    command: userdel -r "{{ item.name }}"
+                    count: 1
+                    units: minutes
+                    unique: yes
+            loop:
+                    - name: datauser1
+                    - name: datauser2
+                    - name: datauser3
+                    - name: loopuser1
+                    - name: loopuser2
+                    - name: loopuser3
+                    - name: forkuser1
+                    - name: forkuser2
+                    - name: forkuser3
+

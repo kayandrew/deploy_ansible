@@ -1,0 +1,21 @@
+---
+- name: import two playbooks
+  hosts: webservers
+  become: true
+  tasks:
+          - name: prepare a webserver
+            include_tasks: install-apache.yml
+            vars:
+                    - webpkg: httpd
+            when: ansible_distribution != 'RedHat'
+          - name: start the service
+            include_tasks: start-apache.yml
+            vars:
+                    - websvc: httpd
+            when: ansible_distribution == 'CentOS'
+            
+          - name: add http to the firewall
+            include_tasks: add-apache-firewall.yml
+            vars:
+                    - firewallpkg: http
+            when: ansible_memtotal_mb >= 500

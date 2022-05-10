@@ -1,0 +1,13 @@
+---
+- name: run a cron job to do a backup
+  hosts: webservers
+  become: true
+  tasks:
+          - name: tar /usr/local
+            cron:
+                    name: myusrlocal tar
+                    minute: '24'
+                    hour: '23'
+                    weekday: '5'
+                    job: "/usr/bin/tar -cvzf /root/backup.tar.gz2 /usr/local"
+                    user: root
